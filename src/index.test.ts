@@ -1,8 +1,8 @@
-import { makeMatch } from "./index";
+import { makeTaggedUnion } from "./index";
 
-describe("makeMatch", () => {
+describe("makeTaggedUnion", () => {
   test("exhaustive matching", () => {
-    const foobar = makeMatch({
+    const foobar = makeTaggedUnion({
       FOO: null,
       BAR: null,
       BAZ: () => 6,
@@ -27,7 +27,7 @@ describe("makeMatch", () => {
   });
 
   test("non-exhaustive matching", () => {
-    const foobar = makeMatch({
+    const foobar = makeTaggedUnion({
       FOO: null,
       BAR: null,
       BAZ: () => 6,
@@ -49,5 +49,21 @@ describe("makeMatch", () => {
     expect(callMe).toHaveBeenCalledTimes(1);
     expect(dontCallMe).not.toHaveBeenCalled();
     expect(ret).toBe(6);
+  });
+
+  test("with generics", () => {
+    // Generic support is not great, but it doesn't yell at least
+
+    const Maybe = makeTaggedUnion({
+      Some: <T>(data: T) => ({ data }),
+      None: null,
+    });
+
+    const data = Maybe.Some(4);
+
+    data.match({
+      Some: ({ data }) => data,
+      None: () => "doot",
+    });
   });
 });

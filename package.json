@@ -9,7 +9,7 @@
     "typescript": "^3.6.4"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc && cp src/index.ts dist/index.ts",
+    "build": "rm -rf dist && tsc && cp src/index.ts dist/index.ts && rm dist/index.test.js",
     "test": "jest"
   }
 }

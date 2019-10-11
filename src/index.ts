@@ -1,10 +1,10 @@
-interface MatchInterface<
+interface TaggedUnionValue<
   CasesObj extends { [key: string]: (...args: any) => any }
 > {
   match<C extends CasesObj>(casesObj: C): ReturnType<C[keyof C]>;
 }
 
-export function makeMatch<T extends { [key: string]: any }>(defObj: T) {
+export function makeTaggedUnion<T extends { [key: string]: any }>(defObj: T) {
   const MATCH_TYPE = Symbol("MATCH_TYPE");
   const MATCH_DATA = Symbol("MATCH_DATA");
 
@@ -26,7 +26,7 @@ export function makeMatch<T extends { [key: string]: any }>(defObj: T) {
 
   type MatchConfiguration = CasesObjFull | CasesObjPartialWithDefaultHandler;
 
-  class MatchInstance<Key extends keyof DataMap> {
+  class TaggedUnionImpl<Key extends keyof DataMap> {
     [MATCH_TYPE]: Key;
     [MATCH_DATA]: DataMap[Key];
 
@@ -53,16 +53,16 @@ export function makeMatch<T extends { [key: string]: any }>(defObj: T) {
     }
   }
 
-  type Match = {
+  type TaggedUnion = {
     [Property in keyof DefObj]: DefObj[Property] extends (...args: any) => any
       ? (
           ...args: Parameters<DefObj[Property]>
-        ) => MatchInterface<MatchConfiguration>
-      : MatchInterface<MatchConfiguration>;
+        ) => TaggedUnionValue<MatchConfiguration>
+      : TaggedUnionValue<MatchConfiguration>;
   };
 
   // @ts-ignore
-  const matchObj: Match = {};
+  const matchObj: TaggedUnion = {};
 
   Object.keys(defObj).forEach((matchType) => {
     const value = defObj[matchType];
@@ -72,11 +72,11 @@ export function makeMatch<T extends { [key: string]: any }>(defObj: T) {
       matchObj[matchType] = (...args: any) => {
         const data = value(...args);
         // @ts-ignore
-        return new MatchInstance(matchType, data);
+        return new TaggedUnionImpl(matchType, data);
       };
     } else {
       // @ts-ignore
-      matchObj[matchType] = new MatchInstance(matchType);
+      matchObj[matchType] = new TaggedUnionImpl(matchType);
     }
   });
 
