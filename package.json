@@ -1,0 +1,15 @@
+{
+  "name": "safety-match",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.4"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc && cp src/index.ts dist/index.ts",
+    "test": "jest"
+  }
+}
