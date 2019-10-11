@@ -49,8 +49,6 @@ export function makeMatch<T extends { [key: string]: any }>(defObj: T) {
       } else if (casesObj._) {
         // @ts-ignore
         return casesObj._(data);
-      } else {
-        throw new Error("Shouldn't get here");
       }
     }
   }
