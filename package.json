@@ -2,6 +2,19 @@
   "name": "safety-match",
   "version": "0.1.0",
   "main": "dist/index.js",
+  "repository": "suchipi/safety-match",
+  "author": "Lily Scott <me@suchipi.com>",
+  "keywords": [
+    "pattern",
+    "match",
+    "matching",
+    "rust",
+    "enum",
+    "tagged",
+    "union",
+    "state",
+    "machine"
+  ],
   "devDependencies": {
     "@types/jest": "^24.0.18",
     "jest": "^24.9.0",
