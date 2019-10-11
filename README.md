@@ -43,7 +43,7 @@ const statusLine = state.match({
     return `${percentComplete} percent loaded`;
   },
   Loaded: (response) => {
-    return `Loaded: ${result}`;
+    return `Loaded: ${response}`;
   },
 });
 
