@@ -66,4 +66,24 @@ describe("makeTaggedUnion", () => {
       None: () => "doot",
     });
   });
+
+  test("with generics 2", () => {
+    // this one works better but it's not super discoverable
+
+    function makeMaybe<T>() {
+      return makeTaggedUnion({
+        Some: (data: T) => ({ data }),
+        None: null,
+      });
+    }
+
+    const Maybe = makeMaybe<string>();
+
+    const data = Maybe.Some("woo");
+
+    data.match({
+      Some: ({ data }) => data,
+      None: () => "doot",
+    });
+  });
 });
