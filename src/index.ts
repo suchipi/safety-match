@@ -1,11 +1,3 @@
-interface TaggedUnionMember<
-  // @ts-ignore
-  T extends {},
-  CasesObj extends { [key: string]: (...args: any) => any }
-> {
-  match<C extends CasesObj>(casesObj: C): ReturnType<C[keyof C]>;
-}
-
 export const none = Symbol();
 
 const MEMBER_TYPE = Symbol();
@@ -31,14 +23,20 @@ export function makeTaggedUnion<
   };
 
   type CasesObjFull = {
-    [Property in keyof DataMap]: (data: DataMap[Property]) => any;
+    [Property in keyof DataMap]: DataMap[Property] extends typeof none
+      ? () => any
+      : (data: DataMap[Property]) => any;
   };
 
-  type CasesObjPartialWithDefaultHandler = Partial<CasesObjFull> & {
+  type if_you_are_seeing_this_then_your_match_didnt_either_handle_all_cases_or_provide_a_default_handler_using_underscore = Partial<
+    CasesObjFull
+  > & {
     _: <Property extends keyof DataMap>(data: DataMap[Property]) => any;
   };
 
-  type MatchConfiguration = CasesObjFull | CasesObjPartialWithDefaultHandler;
+  type MatchConfiguration =
+    | CasesObjFull
+    | if_you_are_seeing_this_then_your_match_didnt_either_handle_all_cases_or_provide_a_default_handler_using_underscore;
 
   class TaggedUnionImpl<Key extends keyof DataMap> {
     [MATCH_TYPE]: Key;
@@ -61,14 +59,22 @@ export function makeTaggedUnion<
     }
   }
 
+  // prettier-ignore
+  interface TaggedUnionMember
+  // @ts-ignore
+  <T extends {}>
+  {
+    match<C extends MatchConfiguration>(casesObj: C): ReturnType<
+      Exclude<C[keyof C], undefined>
+    >;
+  }
+
   type TaggedUnion<T> = {
     [Property in keyof T]: T[Property] extends (...args: any) => any
-      ? (
-          ...args: Parameters<T[Property]>
-        ) => TaggedUnionMember<T, MatchConfiguration>
-      : TaggedUnionMember<T, MatchConfiguration>;
+      ? (...args: Parameters<T[Property]>) => TaggedUnionMember<T>
+      : TaggedUnionMember<T>;
   } & {
-    [MEMBER_TYPE]: TaggedUnionMember<T, MatchConfiguration>;
+    [MEMBER_TYPE]: TaggedUnionMember<T>;
   };
 
   // @ts-ignore
