@@ -60,6 +60,10 @@ const isLoaded = state.match({
   // all types not explicitly handled
   _: () => false,
 });
+
+// If you want the Typescript type of a matchable member of the tagged union, you can use `MemberType`:
+import { MemberType } from "safety-match";
+type StateType = MemberType<typeof State>;
 ```
 
 ## Notes

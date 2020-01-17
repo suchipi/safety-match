@@ -1,8 +1,18 @@
-interface TaggedUnionValue<
+interface TaggedUnionMember<
+  // @ts-ignore
+  T extends {},
   CasesObj extends { [key: string]: (...args: any) => any }
 > {
   match<C extends CasesObj>(casesObj: C): ReturnType<C[keyof C]>;
 }
+
+const MEMBER_TYPE = Symbol();
+
+export type MemberType<
+  TaggedUnionT extends {
+    [MEMBER_TYPE]: any;
+  }
+> = TaggedUnionT[typeof MEMBER_TYPE];
 
 export function makeTaggedUnion<T extends { [key: string]: any }>(defObj: T) {
   const MATCH_TYPE = Symbol("MATCH_TYPE");
@@ -53,16 +63,18 @@ export function makeTaggedUnion<T extends { [key: string]: any }>(defObj: T) {
     }
   }
 
-  type TaggedUnion = {
-    [Property in keyof DefObj]: DefObj[Property] extends (...args: any) => any
+  type TaggedUnion<T> = {
+    [Property in keyof T]: T[Property] extends (...args: any) => any
       ? (
-          ...args: Parameters<DefObj[Property]>
-        ) => TaggedUnionValue<MatchConfiguration>
-      : TaggedUnionValue<MatchConfiguration>;
+          ...args: Parameters<T[Property]>
+        ) => TaggedUnionMember<T, MatchConfiguration>
+      : TaggedUnionMember<T, MatchConfiguration>;
+  } & {
+    [MEMBER_TYPE]: TaggedUnionMember<T, MatchConfiguration>;
   };
 
   // @ts-ignore
-  const matchObj: TaggedUnion = {};
+  const matchObj: TaggedUnion<T> = {};
 
   Object.keys(defObj).forEach((matchType) => {
     const value = defObj[matchType];

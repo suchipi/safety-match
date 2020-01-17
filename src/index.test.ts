@@ -1,4 +1,4 @@
-import { makeTaggedUnion } from "./index";
+import { makeTaggedUnion, MemberType } from "./index";
 
 describe("makeTaggedUnion", () => {
   test("exhaustive matching", () => {
@@ -84,6 +84,21 @@ describe("makeTaggedUnion", () => {
     data.match({
       Some: ({ data }) => data,
       None: () => "doot",
+    });
+  });
+
+  test("extracting member type", () => {
+    const State = makeTaggedUnion({
+      Some: (data: string) => ({ data }),
+      None: null,
+    });
+
+    type StateType = MemberType<typeof State>;
+
+    const data: StateType = State.Some("woo");
+    data.match({
+      Some: ({ data }) => data,
+      _: () => {},
     });
   });
 });
