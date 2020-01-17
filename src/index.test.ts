@@ -99,7 +99,7 @@ describe("makeTaggedUnion", () => {
     data.match({
       Some: ({ data }) => data,
       // _: () => {},
-      None: (data) => data,
+      None: () => data,
     });
   });
 });
