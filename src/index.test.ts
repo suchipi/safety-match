@@ -1,10 +1,10 @@
-import { makeTaggedUnion, MemberType } from "./index";
+import { makeTaggedUnion, MemberType, none } from "./index";
 
 describe("makeTaggedUnion", () => {
   test("exhaustive matching", () => {
     const foobar = makeTaggedUnion({
-      FOO: null,
-      BAR: null,
+      FOO: none,
+      BAR: none,
       BAZ: () => 6,
     });
 
@@ -28,8 +28,8 @@ describe("makeTaggedUnion", () => {
 
   test("non-exhaustive matching", () => {
     const foobar = makeTaggedUnion({
-      FOO: null,
-      BAR: null,
+      FOO: none,
+      BAR: none,
       BAZ: () => 6,
     });
 
@@ -56,7 +56,7 @@ describe("makeTaggedUnion", () => {
 
     const Maybe = makeTaggedUnion({
       Some: <T>(data: T) => ({ data }),
-      None: null,
+      None: none,
     });
 
     const data = Maybe.Some(4);
@@ -73,7 +73,7 @@ describe("makeTaggedUnion", () => {
     function makeMaybe<T>() {
       return makeTaggedUnion({
         Some: (data: T) => ({ data }),
-        None: null,
+        None: none,
       });
     }
 
@@ -90,15 +90,16 @@ describe("makeTaggedUnion", () => {
   test("extracting member type", () => {
     const State = makeTaggedUnion({
       Some: (data: string) => ({ data }),
-      None: null,
+      None: none,
     });
 
     type StateType = MemberType<typeof State>;
 
-    const data: StateType = State.Some("woo");
+    const data: StateType = State.None;
     data.match({
       Some: ({ data }) => data,
-      _: () => {},
+      // _: () => {},
+      None: (data) => data,
     });
   });
 });

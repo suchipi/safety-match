@@ -6,6 +6,8 @@ interface TaggedUnionMember<
   match<C extends CasesObj>(casesObj: C): ReturnType<C[keyof C]>;
 }
 
+export const none = Symbol();
+
 const MEMBER_TYPE = Symbol();
 
 export type MemberType<
@@ -14,7 +16,9 @@ export type MemberType<
   }
 > = TaggedUnionT[typeof MEMBER_TYPE];
 
-export function makeTaggedUnion<T extends { [key: string]: any }>(defObj: T) {
+export function makeTaggedUnion<
+  T extends { [key: string]: typeof none | ((...args: any[]) => any) }
+>(defObj: T) {
   const MATCH_TYPE = Symbol("MATCH_TYPE");
   const MATCH_DATA = Symbol("MATCH_DATA");
 

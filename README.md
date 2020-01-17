@@ -2,12 +2,10 @@
 
 `safety-match` provides Rust-style tagged union matching for JavaScript, with TypeScript types.
 
-This README is pretty rough around the edges; I'll make it better later.
-
 ## Usage Example
 
 ```ts
-import { makeTaggedUnion } from "safety-match";
+import { makeTaggedUnion, none } from "safety-match";
 
 // makeTaggedUnion creates an object with properties
 // cooresponding to the properties on the object you
@@ -28,7 +26,7 @@ const State = makeTaggedUnion({
 
   // This defines a state called 'Unstarted', that has no data
   // in it, and therefore does not need to be constructed.
-  Unstarted: null,
+  Unstarted: none,
 });
 
 let state = State.Unstarted;
@@ -65,12 +63,6 @@ const isLoaded = state.match({
 import { MemberType } from "safety-match";
 type StateType = MemberType<typeof State>;
 ```
-
-## Notes
-
-## Warning: TypeScript support caveat
-
-The TypeScript support only works right if you set `compilerOptions.strict` to `true` in your `tsconfig.json`.
 
 ## License
 
