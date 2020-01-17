@@ -45,19 +45,13 @@ export function makeTaggedUnion<T extends { [key: string]: any }>(defObj: T) {
       this[MATCH_DATA] = data;
     }
 
-    // @ts-ignore
-    match<C extends CasesObj<any>>(casesObj: C): ReturnType<C[keyof C]> {
+    match(casesObj: any): any {
       const data = this[MATCH_DATA];
-      // @ts-ignore
       const matchingHandler = casesObj[this[MATCH_TYPE]];
 
       if (matchingHandler) {
-        // @ts-ignore
         return matchingHandler(data);
-
-        // @ts-ignore
       } else if (casesObj._) {
-        // @ts-ignore
         return casesObj._(data);
       }
     }
