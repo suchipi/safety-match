@@ -11,7 +11,6 @@ export type MemberType<
 export function makeTaggedUnion<
   T extends { [key: string]: typeof none | ((...args: any[]) => any) }
 >(defObj: T) {
-  const MATCH_TYPE = Symbol("MATCH_TYPE");
   const MATCH_DATA = Symbol("MATCH_DATA");
 
   type DefObj = typeof defObj;
@@ -39,17 +38,17 @@ export function makeTaggedUnion<
     | if_you_are_seeing_this_then_your_match_didnt_either_handle_all_cases_or_provide_a_default_handler_using_underscore;
 
   class TaggedUnionImpl<Key extends keyof DataMap> {
-    [MATCH_TYPE]: Key;
+    type: Key;
     [MATCH_DATA]: DataMap[Key];
 
     constructor(MatchType: Key, data: DataMap[Key]) {
-      this[MATCH_TYPE] = MatchType;
+      this.type = MatchType;
       this[MATCH_DATA] = data;
     }
 
     match(casesObj: any): any {
       const data = this[MATCH_DATA];
-      const matchingHandler = casesObj[this[MATCH_TYPE]];
+      const matchingHandler = casesObj[this.type];
 
       if (matchingHandler) {
         return matchingHandler(data);
@@ -66,7 +65,8 @@ export function makeTaggedUnion<
   {
     match<C extends MatchConfiguration>(casesObj: C): ReturnType<
       Exclude<C[keyof C], undefined>
-    >;
+		>;
+		type: string;
   }
 
   type TaggedUnion<T> = {
