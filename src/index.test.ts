@@ -102,4 +102,26 @@ describe("makeTaggedUnion", () => {
       None: () => data,
     });
   });
+
+  test("type property", () => {
+    const State = makeTaggedUnion({
+      Some: (data: string) => ({ data }),
+      None: none,
+    });
+
+    const state = State.None;
+
+    expect(state.type).toBe("None");
+  });
+
+  test("data property", () => {
+    const State = makeTaggedUnion({
+      Some: (data: number) => data,
+      None: none,
+    });
+
+    const state = State.Some(42);
+
+    expect(state.data).toBe(42);
+  });
 });
