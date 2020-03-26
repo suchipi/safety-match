@@ -16,6 +16,8 @@ export function makeTaggedUnion<
   type DataMap = {
     [Property in keyof DefObj]: DefObj[Property] extends (...args: any) => any
       ? ReturnType<DefObj[Property]>
+      : DefObj[Property] extends typeof none
+      ? undefined
       : DefObj[Property];
   };
 
@@ -64,8 +66,8 @@ export function makeTaggedUnion<
     match<C extends MatchConfiguration>(casesObj: C): ReturnType<
       Exclude<C[keyof C], undefined>
 		>;
-		type: string;
-		data: unknown;
+		type: keyof DefObj;
+		data: DataMap[keyof DefObj];
   }
 
   type TaggedUnion<T> = {
