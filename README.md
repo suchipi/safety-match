@@ -8,7 +8,7 @@
 import { makeTaggedUnion, none } from "safety-match";
 
 // makeTaggedUnion creates an object with properties
-// cooresponding to the properties on the object you
+// corresponding to the properties on the object you
 // pass in to makeTaggedUnion.
 const State = makeTaggedUnion({
   // The format here is:
