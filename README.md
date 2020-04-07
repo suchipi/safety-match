@@ -31,14 +31,14 @@ const State = makeTaggedUnion({
 
 let state = State.Unstarted;
 // or eg:
-// let state = States.Loading(55);
+// let state = State.Loading(55);
 
 // state.match runs the handler that matches the current state,
 // passing in the data for that state (if any).
 const statusLine = state.match({
   Unstarted: () => "Waiting...",
-  Loading: ({ percentComplete }) => {
-    return `${percentComplete} percent loaded`;
+  Loading: ({ percentLoaded }) => {
+    return `${percentLoaded} percent loaded`;
   },
   Loaded: (response) => {
     return `Loaded: ${response}`;
@@ -47,7 +47,7 @@ const statusLine = state.match({
 
 const percentComplete = state.match({
   Unstarted: () => 0,
-  Loading: ({ percentComplete }) => percentComplete,
+  Loading: ({ percentLoaded }) => percentLoaded,
   Loaded: () => 100,
 });
 
