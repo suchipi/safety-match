@@ -54,6 +54,8 @@ export function makeTaggedUnion<
         return matchingHandler(data);
       } else if (casesObj._) {
         return casesObj._(data);
+      } else {
+        throw new Error(`Match did not handle case: '${this.type}'`);
       }
     }
   }

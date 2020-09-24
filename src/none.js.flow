@@ -1,0 +1,9 @@
+// @flow
+
+export opaque type None = {
+  __this_property_isnt_here_at_runtime_this_is_just_for_flow: true,
+};
+
+export const none: None = {
+  __this_property_isnt_here_at_runtime_this_is_just_for_flow: true,
+};

@@ -17,12 +17,16 @@
   ],
   "devDependencies": {
     "@types/jest": "^24.0.18",
+    "flow-bin": "^0.134.0",
     "jest": "^24.9.0",
     "ts-jest": "^24.1.0",
     "typescript": "^3.6.4"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc && cp src/index.ts dist/index.ts && rm dist/index.test.js",
+    "build": "rm -rf dist && tsc && cp src/index.ts dist/index.ts && rm dist/index.test.js && cp src/index.js.flow dist/index.js.flow && cp src/none.js.flow dist/none.js.flow",
     "test": "jest"
+  },
+  "dependencies": {
+    "flown": "^0.3.1"
   }
 }
