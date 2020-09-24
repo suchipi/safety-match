@@ -205,56 +205,6 @@ type TaggedUnion<DefObj: DefObjSuper> = {
 export function makeTaggedUnion<T: DefObjSuper>(defObj: T): TaggedUnion<T> {
   type DefObj = typeof defObj;
 
-  type TaggedUnion<DefObj: DefObjSuper> = {
-    ...$ObjMap<
-      DefObj,
-      <V>(
-        V
-      ) => If<
-        Is<V, None>,
-        // $FlowIgnore
-        TaggedUnionMember<DefObj>,
-        If<
-          IsCompat<V, FuncWith1Arg>,
-          (arg1: Arg1of1<V>) => TaggedUnionMember<DefObj>,
-          If<
-            IsCompat<V, FuncWith2Args>,
-            (arg1: Arg1of2<V>, arg2: Arg2of2<V>) => TaggedUnionMember<DefObj>,
-            If<
-              IsCompat<V, FuncWith3Args>,
-              (
-                arg1: Arg1of3<V>,
-                arg2: Arg2of3<V>,
-                arg3: Arg3of3<V>
-              ) => TaggedUnionMember<DefObj>,
-              If<
-                IsCompat<V, FuncWith4Args>,
-                (
-                  arg1: Arg1of4<V>,
-                  arg2: Arg2of4<V>,
-                  arg3: Arg3of4<V>,
-                  arg4: Arg4of4<V>
-                ) => TaggedUnionMember<DefObj>,
-                If<
-                  IsCompat<V, FuncWith5Args>,
-                  (
-                    arg1: Arg1of5<V>,
-                    arg2: Arg2of5<V>,
-                    arg3: Arg3of5<V>,
-                    arg4: Arg4of5<V>,
-                    arg5: Arg5of5<V>
-                  ) => TaggedUnionMember<DefObj>,
-                  TAGGED_UNIONS_WHOSE_CONSTRUCTORS_TAKE_LESS_THAN_ONE_OR_MORE_THAN_5_ARGUMENTS_ARE_NOT_SUPPORTED_WITH_FLOW
-                >
-              >
-            >
-          >
-        >
-      >
-    >,
-    __member_type_this_is_only_here_for_flow_not_at_runtime_dont_use_this: TaggedUnionMember<DefObj>,
-  };
-
   // $FlowIgnore
   const matchObj: TaggedUnion<T> = {};
 
@@ -273,6 +223,5 @@ export function makeTaggedUnion<T: DefObjSuper>(defObj: T): TaggedUnion<T> {
     }
   });
 
-  // $FlowIgnore
   return matchObj;
 }
