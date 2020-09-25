@@ -1,5 +1,5 @@
 // @flow
-import type { Is, IsCompat, Return } from "flown";
+import type { Is, IsCompat } from "flown";
 
 // Utility types start
 type If<X: boolean, Then, Else = empty> = $Call<
