@@ -92,10 +92,10 @@ describe("makeTaggedUnion", () => {
       Some: (data: string) => ({ data }),
       None: none,
     });
+    type State = MemberType<typeof State>;
 
-    type StateType = MemberType<typeof State>;
+    const data: State = State.None;
 
-    const data: StateType = State.None;
     data.match({
       Some: ({ data }) => data,
       // _: () => {},
@@ -103,7 +103,7 @@ describe("makeTaggedUnion", () => {
     });
   });
 
-  test("type property", () => {
+  test("variant property", () => {
     const State = makeTaggedUnion({
       Some: (data: string) => ({ data }),
       None: none,
@@ -111,7 +111,7 @@ describe("makeTaggedUnion", () => {
 
     const state = State.None;
 
-    expect(state.type).toBe("None");
+    expect(state.variant).toBe("None");
   });
 
   test("data property", () => {

@@ -73,10 +73,30 @@ type Arg5of5<SomeFunc> = $Call<
 >;
 // Utility types end
 
-import { type None, none } from "./none";
+// HACK: None is actually a Symbol, so it shouldn't be callable, but we're
+// going to pretend it's a function so that getting the DataMap is just
+// getting the return type of everything in the DefObj.
+//
+// Otherwise, we would need to use `If` everywhere to "refine" out the None
+// case, but it seems like `If` doesn't always refine (couldn't get it
+// working).
+//
+// I wanted it to be a function that returned `void`, so that `void` would be
+// the data type of None (since that's what it is), but for some reason, flow
+// was comparing every match arm with the return type of this function, so
+// every match was failing. So I had to change it to any to make flow shut up.
+// This has the unfortunate side-effect that the .data property on a tagged
+// union member now has to be any (because a union of anything with any
+// behaves just like any). But at least matching works.
+//
+// The unfortunate side-effect of this all is that flow won't yell at you for
+// calling None. So hopefully no one ever does that.
+export type None = ((_: number) => any) & {
+  __none_this_is_only_here_for_flow_not_at_runtime_dont_use_this: true,
+};
 
+declare var none: None;
 export { none };
-export type { None };
 
 export type MemberType<
   TaggedUnionT: {
@@ -90,69 +110,22 @@ export type MemberType<
 type DefObjSuper = { [key: string]: None | ((...args: any) => any) };
 
 type ExtractReturnType = <V>((...args: any) => V) => V;
-// Don't ask
-type ReturnOf<T> = $PropertyType<
-  $ObjMap<{ focus: T }, ExtractReturnType>,
-  "focus"
->;
 
-// prettier-ignore
-type DataMapWithNones<DefObj: DefObjSuper> = $ObjMap<DefObj, <V>(V) =>
-  If<Is<V, None>,
-    None,
-    ReturnOf<V>
-  >
->;
+type DataMap<DefObj: DefObjSuper> = $ObjMap<DefObj, ExtractReturnType>;
 
-type DataMap<DefObj: DefObjSuper> = $ObjMap<
-  DataMapWithNones<DefObj>,
-  <V>(V) => If<Is<V, None>, typeof undefined, V>
->;
+type DataForKey<Key, DefObj: DefObjSuper> = $ElementType<DataMap<DefObj>, Key>;
 
-type DataWithNonesForKey<DefObj: DefObjSuper, Key> = $ElementType<
-  DataMapWithNones<DefObj>,
-  Key
->;
-
-// prettier-ignore
 type CasesObjFull<DefObj: DefObjSuper, Ret> = $ObjMapi<
-  DataMapWithNones<DefObj>,
-  <K, V>(K, V) =>
-    If<Is<DataWithNonesForKey<DefObj, K>, None>,
-      () => Ret,
-      (data: DataWithNonesForKey<DefObj, K>) => Ret
-    >
+  DefObj,
+  <K, V>(K, V) => (data: DataForKey<K, DefObj>) => Ret
 >;
 
 type Partial<T> = $Rest<T, {}>;
 
 type CasesObjPartialWithDefault<DefObj: DefObjSuper, Ret> = {|
   ...Partial<CasesObjFull<DefObj, Ret>>,
-  _: (data: $Values<DataMap<DefObj>>) => Ret,
+  _: (data: any) => Ret,
 |};
-
-class TaggedUnionImpl {
-  type: any;
-  data: any;
-
-  constructor(MatchType: any, data: any) {
-    this.type = MatchType;
-    this.data = data;
-  }
-
-  match(casesObj: any): any {
-    const data = this.data;
-    const matchingHandler = casesObj[this.type];
-
-    if (matchingHandler) {
-      return matchingHandler(data);
-    } else if (casesObj._) {
-      return casesObj._(data);
-    } else {
-      throw new Error(`Match did not handle case: '${this.type}'`);
-    }
-  }
-}
 
 interface TaggedUnionMember<DefObj: DefObjSuper> {
   match: <
@@ -165,8 +138,8 @@ interface TaggedUnionMember<DefObj: DefObjSuper> {
   >(
     cases: CasesObj
   ) => Ret;
-  type: $Keys<DefObj>;
-  data: $Values<DataMap<DefObj>>;
+  variant: $Keys<DefObj>;
+  data: any;
 }
 
 opaque type TAGGED_UNIONS_WHOSE_CONSTRUCTORS_TAKE_LESS_THAN_ONE_OR_MORE_THAN_5_ARGUMENTS_ARE_NOT_SUPPORTED_WITH_FLOW = (
@@ -198,30 +171,7 @@ type DefObjToTaggedUnionMapper<DefObj: DefObjSuper> = <V>(V) =>
 type TaggedUnion<DefObj: DefObjSuper> = {
   ...$ObjMap<DefObj, DefObjToTaggedUnionMapper<DefObj>>,
   __member_type_this_is_only_here_for_flow_not_at_runtime_dont_use_this: TaggedUnionMember<DefObj>,
-  __datamap_for_testing_flow_not_here_at_runtime_do_not_use_this: DataMap<DefObj>,
-  __datamap_with_nones_for_testing_flow_not_here_at_runtime_do_not_use_this: DataMapWithNones<DefObj>,
 };
 
-export function makeTaggedUnion<T: DefObjSuper>(defObj: T): TaggedUnion<T> {
-  type DefObj = typeof defObj;
-
-  // $FlowIgnore
-  const matchObj: TaggedUnion<T> = {};
-
-  Object.keys(defObj).forEach((matchType) => {
-    const value = defObj[matchType];
-
-    if (typeof value === "function") {
-      // $FlowIgnore
-      matchObj[matchType] = (...args: any) => {
-        const data = value(...args);
-        return new TaggedUnionImpl(matchType, data);
-      };
-    } else {
-      // $FlowIgnore
-      matchObj[matchType] = new TaggedUnionImpl(matchType);
-    }
-  });
-
-  return matchObj;
-}
+declare function makeTaggedUnion<T: DefObjSuper>(defObj: T): TaggedUnion<T>;
+export { makeTaggedUnion };

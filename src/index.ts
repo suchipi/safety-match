@@ -37,25 +37,25 @@ export function makeTaggedUnion<
     | CasesObjFull
     | if_you_are_seeing_this_then_your_match_didnt_either_handle_all_cases_or_provide_a_default_handler_using_underscore;
 
-  class TaggedUnionImpl<Key extends keyof DataMap> {
-    type: Key;
-    data: DataMap[Key];
+  class MemberObject<Variant extends keyof DataMap> {
+    variant: Variant;
+    data: DataMap[Variant];
 
-    constructor(MatchType: Key, data: DataMap[Key]) {
-      this.type = MatchType;
+    constructor(variant: Variant, data: DataMap[Variant]) {
+      this.variant = variant;
       this.data = data;
     }
 
     match(casesObj: any): any {
       const data = this.data;
-      const matchingHandler = casesObj[this.type];
+      const matchingHandler = casesObj[this.variant];
 
       if (matchingHandler) {
         return matchingHandler(data);
       } else if (casesObj._) {
         return casesObj._(data);
       } else {
-        throw new Error(`Match did not handle case: '${this.type}'`);
+        throw new Error(`Match did not handle variant: '${this.variant}'`);
       }
     }
   }
@@ -68,7 +68,7 @@ export function makeTaggedUnion<
     match<C extends MatchConfiguration>(casesObj: C): ReturnType<
       Exclude<C[keyof C], undefined>
 		>;
-		type: keyof DefObj;
+		variant: keyof DefObj;
 		data: DataMap[keyof DefObj];
   }
 
@@ -91,11 +91,11 @@ export function makeTaggedUnion<
       matchObj[matchType] = (...args: any) => {
         const data = value(...args);
         // @ts-ignore
-        return new TaggedUnionImpl(matchType, data);
+        return new MemberObject(matchType, data);
       };
     } else {
       // @ts-ignore
-      matchObj[matchType] = new TaggedUnionImpl(matchType);
+      matchObj[matchType] = new MemberObject(matchType);
     }
   });
 

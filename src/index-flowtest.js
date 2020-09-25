@@ -12,41 +12,18 @@ const State = makeTaggedUnion({
 const state: StateType = State.unstarted;
 const state2: StateType = State.running("");
 
-const stateDataMap =
-  State.__datamap_for_testing_flow_not_here_at_runtime_do_not_use_this;
-
-// These should pass
-(stateDataMap.unstarted: void);
-(stateDataMap.running: string);
-(stateDataMap.exited: { output: string, exitCode: number });
-
-// These should fail
-(stateDataMap.unstarted: Invalid);
-(stateDataMap.running: Invalid);
-(stateDataMap.exited: Invalid);
-
-const stateDataMapWithNones =
-  State.__datamap_with_nones_for_testing_flow_not_here_at_runtime_do_not_use_this;
-
-// These should pass
-(stateDataMapWithNones.unstarted: None);
-(stateDataMapWithNones.running: string);
-(stateDataMapWithNones.exited: { output: string, exitCode: number });
-
-// These should fail
-(stateDataMapWithNones.unstarted: Invalid);
-(stateDataMapWithNones.running: Invalid);
-(stateDataMapWithNones.exited: Invalid);
+state.variant;
+state.data;
 
 const result = state.match({
   unstarted: () => "hi",
   running: (output) => {
-    (output: string);
-    return 2;
+    // (output: string);
+    return output.length;
   },
   exited: ({ output, exitCode }) => {
-    (output: string);
-    (exitCode: number);
+    // (output: string);
+    // (exitCode: number);
     return 3;
   },
   _: () => 4,
@@ -69,12 +46,12 @@ const health2: HealthType = Health.unknown;
 
 const result2 = health.match({
   checking: (time) => {
-    (time: number);
-    return "hi";
+    // (time: number);
+    return time;
   },
   _: () => true,
 });
-(result2: boolean | string);
+(result2: boolean | number);
 
 // next line should error
 (result2: Invalid);
