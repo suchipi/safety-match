@@ -368,10 +368,46 @@ However, it's often useful to use the `variant` property when logging a `MemberO
 
 ## Flow Limitations
 
+### Data falls back to any in some (uncommon) places
+
 Due to limitations in Flow, there are a few places where TypeScript knows what type something is, but Flow does not (and has to use `any` instead). These are:
 
 - The data passed into a `_` handler in a match
 - The `data` property on a `MemberObject` (but not the data passed into non-`_` match handlers; those are typed).
+
+### Old versions don't handle match properly
+
+If you're using an old version of flow, match might report errors even though you're using it correctly. The current version of flow at time of writing is 0.134.0.
+
+### May need to annotate `TaggedUnion`s in `types_first` mode
+
+If flow is configured to use `types_first` mode (which is the default in flow 0.134.0 and higher), you may need to annotate your `TaggedUnion` objects in order to export them from modules. You'll know you need to do this if flow gives you an error like this:
+
+```
+Cannot build a typed interface for this module. You should annotate the exports of this module with types. Cannot determine the type of this call expression. Please provide an annotation, e.g., by adding a type cast around this expression.
+```
+
+If you get such an error, and your code looks something like this:
+
+```ts
+import { makeTaggedUnion, none } from "safety-match";
+
+export const myTaggedUnion = makeTaggedUnion({
+  /* variants... */
+});
+```
+
+You can make flow happy by changing it to this:
+
+```ts
+import {makeTaggedUnion, none, type TaggedUnion} from "safety-match";
+
+const myDefObj = {
+  /* variants... */
+};
+
+export const myTaggedUnion: TaggedUnion<typeof myDefObj> = makeTaggedUnions(myDefObj);
+```
 
 ## License
 
