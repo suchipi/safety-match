@@ -2,6 +2,8 @@
 
 `safety-match` provides pattern matching for JavaScript, TypeScript, and Flow.
 
+> Flow support is a work in progress and may not work for you. It's highly recommended to use TypeScript instead, if you can.
+
 ## Why?
 
 The point of `safety-match` is that I wanted to bring [Rust's experience of pattern-matching on enums](https://doc.rust-lang.org/1.1.0/book/match.html#matching-on-enums) to JavaScript.
