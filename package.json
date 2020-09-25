@@ -27,8 +27,5 @@
   "scripts": {
     "build": "rm -rf dist && tsc && cp src/index.ts dist/index.ts && rm dist/index.test.js && cp src/index.js.flow dist/index.js.flow",
     "test": "jest"
-  },
-  "dependencies": {
-    "flown": "^0.3.1"
   }
 }

@@ -1,21 +1,48 @@
 // @flow
-import type { Is, IsCompat } from "flown";
 
-// Utility types start
+/* #region Utility Types */
+
+// We have to copy stuff out of flown because other projects that install us
+// can't resolve a flown import in our codebase, even if they install flown.
+
+/* #region `Is` from flown */
+declare function is<A, B: A>(
+  ...args: [A, B]
+): $Call<((B) => true) & (() => false), A>;
+declare function is(): false;
+
+type _Is = typeof is;
+
+type Is<A, B> = $Call<_Is, A, B>;
+/* #endregion */
+
+/* #region `IsCompat` from flown */
+declare function isCompat<A, B: A>(...args: [A, B]): true;
+declare function isCompat(): false;
+
+type _IsCompat = typeof isCompat;
+
+type IsCompat<A, B> = $Call<_IsCompat, A, B>;
+/* #endregion */
+
+/* #region $If from https://gist.github.com/miyaokamarina/934887ac2aff863b9c73283acfb71cf0 */
 type If<X: boolean, Then, Else = empty> = $Call<
   ((true, Then, Else) => Then) & ((false, Then, Else) => Else),
   X,
   Then,
   Else
 >;
+/* #endregion */
 
-type FuncWithZeroArgs = (...args: []) => any;
+/* #region Arity checkers by me */
 type FuncWith1Arg = <A>(A) => any;
 type FuncWith2Args = <A, B>(A, B) => any;
 type FuncWith3Args = <A, B, C>(A, B, C) => any;
 type FuncWith4Args = <A, B, C, D>(A, B, C, D) => any;
 type FuncWith5Args = <A, B, C, D, E>(A, B, C, D, E) => any;
+/* #endregion */
 
+/* #region Parameter extractors by me */
 type Arg1of1<SomeFunc> = $Call<<A, F: (A) => any>(F) => A & A, SomeFunc>;
 
 type Arg1of2<SomeFunc> = $Call<<A, B, F: (A, B) => any>(F) => A & A, SomeFunc>;
@@ -71,7 +98,9 @@ type Arg5of5<SomeFunc> = $Call<
   <A, B, C, D, E, F: (A, B, C, D, E) => any>(F) => E & E,
   SomeFunc
 >;
-// Utility types end
+/* #endregion */
+
+/* #endregion */
 
 // HACK: None is actually a Symbol, so it shouldn't be callable, but we're
 // going to pretend it's a function so that getting the DataMap is just
