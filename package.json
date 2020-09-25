@@ -1,6 +1,6 @@
 {
   "name": "safety-match",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "main": "dist/index.js",
   "repository": "suchipi/safety-match",
   "author": "Lily Scott <me@suchipi.com>",
@@ -8,6 +8,8 @@
     "pattern",
     "match",
     "matching",
+    "typescript",
+    "flow",
     "rust",
     "enum",
     "tagged",
@@ -23,7 +25,7 @@
     "typescript": "^3.6.4"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc && cp src/index.ts dist/index.ts && rm dist/index.test.js && cp src/index.js.flow dist/index.js.flow && cp src/none.js.flow dist/none.js.flow",
+    "build": "rm -rf dist && tsc && cp src/index.ts dist/index.ts && rm dist/index.test.js && cp src/index.js.flow dist/index.js.flow",
     "test": "jest"
   },
   "dependencies": {
