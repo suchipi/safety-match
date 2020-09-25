@@ -72,7 +72,7 @@ interface MemberObject<DefObj extends DefObjSuper> {
   data: DataMap<DefObj>[keyof DefObj];
 }
 
-type TaggedUnion<DefObj extends DefObjSuper> = {
+export type TaggedUnion<DefObj extends DefObjSuper> = {
   [Property in keyof DefObj]: DefObj[Property] extends (...args: any) => any
     ? (...args: Parameters<DefObj[Property]>) => MemberObject<DefObj>
     : MemberObject<DefObj>;

@@ -168,7 +168,7 @@ type DefObjToTaggedUnionMapper<DefObj: DefObjSuper> = <V>(V) =>
     >
   >;
 
-type TaggedUnion<DefObj: DefObjSuper> = {
+export type TaggedUnion<DefObj: DefObjSuper> = {
   ...$ObjMap<DefObj, DefObjToTaggedUnionMapper<DefObj>>,
   __member_type_this_is_only_here_for_flow_not_at_runtime_dont_use_this: TaggedUnionMember<DefObj>,
 };

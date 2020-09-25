@@ -1,5 +1,11 @@
 // @flow
-import { makeTaggedUnion, type MemberType, none, type None } from "./index";
+import {
+  makeTaggedUnion,
+  type MemberType,
+  none,
+  type None,
+  type TaggedUnion,
+} from "./index";
 import type { Invalid } from "./Invalid";
 
 type StateType = MemberType<typeof State>;
@@ -60,3 +66,11 @@ const result2 = health.match({
 health.match({
   checking: () => "hi",
 });
+
+const switchDef = {
+  on: (voltage: number, current: number) => ({ voltage, current }),
+  off: none,
+};
+const Switch = makeTaggedUnion(switchDef);
+
+(Switch: TaggedUnion<typeof switchDef>);
