@@ -197,4 +197,14 @@ describe("makeTaggedUnion", () => {
 
     expect(state.data).toBe(42);
   });
+
+  test("MemberObject name", () => {
+    const State = makeTaggedUnion({
+      Some: (data: number) => data,
+      None: none,
+    });
+
+    const state = State.Some(42);
+    expect(state.constructor.name).toBe("MemberObject");
+  });
 });

@@ -62,6 +62,7 @@ class MemberObjectImpl {
     }
   }
 }
+Object.defineProperty(MemberObjectImpl, "name", { value: "MemberObject" });
 
 interface MemberObject<DefObj extends DefObjSuper> {
   match<C extends MatchConfiguration<DefObj>>(
