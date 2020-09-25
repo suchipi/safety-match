@@ -1,6 +1,6 @@
 {
   "name": "safety-match",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "main": "dist/index.js",
   "repository": "suchipi/safety-match",
   "author": "Lily Scott <me@suchipi.com>",
