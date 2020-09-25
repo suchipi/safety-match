@@ -36,7 +36,7 @@ const result = state.match({
 });
 (result: number | string);
 
-// next line should error
+// $FlowExpectedError
 (result: Invalid);
 
 type HealthType = MemberType<typeof Health>;
@@ -59,10 +59,10 @@ const result2 = health.match({
 });
 (result2: boolean | number);
 
-// next line should error
+// $FlowExpectedError
 (result2: Invalid);
 
-// next line should error for not checking all cases
+// $FlowExpectedError not handling all variants
 health.match({
   checking: () => "hi",
 });
