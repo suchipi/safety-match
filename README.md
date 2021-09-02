@@ -4,6 +4,12 @@
 
 > Flow support is a work in progress and may not work for you. It's highly recommended to use TypeScript instead, if you can.
 
+## High-level Explanation
+
+Pattern matching in JavaScript/Flow/TypeScript. When using Flow/TypeScript, it identifies non-exhaustive matches and knows the types of data included in variants.
+
+In short, it brings the user experience of Rust's enum pattern matching to TypeScript/Flow.
+
 ## Why?
 
 The point of `safety-match` is that I wanted to bring [Rust's experience of pattern-matching on enums](https://doc.rust-lang.org/1.1.0/book/match.html#matching-on-enums) to JavaScript.
