@@ -40,6 +40,11 @@ type MatchConfiguration<DefObj extends DefObjSuper> =
       DefObj
     >;
 
+// this type works by "extracting" the generic type from a TaggedUnion (see
+// https://stackoverflow.com/questions/44851268/typescript-how-to-extract-the-generic-parameter-from-a-type)
+// and rewrapping it in MemberObject, which is the type of tagged union instances
+export type OtherTaggedUnion<Type> = MemberObject<Type extends TaggedUnion<infer X> ? X : never>;
+
 class MemberObjectImpl {
   variant: any;
   data: any;
