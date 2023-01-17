@@ -1,4 +1,4 @@
-import { makeTaggedUnion, MemberType, none } from "./index";
+import { makeTaggedUnion, MemberType, none, TaggedUnion } from "./index";
 
 describe("makeTaggedUnion", () => {
   test("exhaustive matching behavior", () => {
@@ -156,6 +156,28 @@ describe("makeTaggedUnion", () => {
 
     data.match({
       Some: ({ data }) => data,
+      None: () => "doot",
+    });
+  });
+
+  test("with generics 3", () => {
+    // this one does everything we'd want, but requires duplication
+
+    const Maybe = makeTaggedUnion({
+      Some: (data: any) => data,
+      None: none,
+    });
+    type Maybe<T> = MemberType<
+      TaggedUnion<{
+        Some: (data: T) => T;
+        None: typeof none;
+      }>
+    >;
+
+    const data: Maybe<string> = Maybe.Some("woo");
+
+    data.match({
+      Some: (str) => str,
       None: () => "doot",
     });
   });
