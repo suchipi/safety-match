@@ -367,6 +367,10 @@ Although a `MemberObject` has a `variant` property, and you could theoretically 
 
 However, it's often useful to use the `variant` property when logging a `MemberObject`.
 
+## Note about generics
+
+To use generics in your tagged union type, ie to represent a `Maybe<T>` with `Some` and `None`, you'll have to use a bit of boilerplate. See [this issue comment](https://github.com/suchipi/safety-match/issues/15#issuecomment-1384721329) for an example.
+
 ## License
 
 MIT
