@@ -1,3 +1,0 @@
-// @flow
-
-export opaque type Invalid = string & number;

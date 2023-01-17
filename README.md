@@ -1,14 +1,12 @@
 # safety-match
 
-`safety-match` provides pattern matching for JavaScript, TypeScript, and Flow.
-
-> Flow support is a work in progress and may not work for you. It's highly recommended to use TypeScript instead, if you can.
+`safety-match` provides pattern matching for JavaScript and TypeScript.
 
 ## High-level Explanation
 
-Pattern matching in JavaScript/Flow/TypeScript. When using Flow/TypeScript, it identifies non-exhaustive matches and knows the types of data included in variants.
+Pattern matching in JavaScript/TypeScript. When using TypeScript, it identifies non-exhaustive matches and knows the types of data included in variants.
 
-In short, it brings the user experience of Rust's enum pattern matching to TypeScript/Flow.
+In short, it brings the user experience of Rust's enum pattern matching to TypeScript.
 
 ## Why?
 
@@ -86,15 +84,15 @@ switch(msg.variant) {
 }
 ```
 
-But `match` is more powerful for several reasons:
+But Rust's `match` is more powerful than JavaScript's `switch` for several reasons:
 
-- If you don't handle all the variants, the compiler will warn you that you forgot some
-- You have to remember to put a `break` in every case, otherwise the code execution will fall through.
-- `switch` is a statement, not an expression, so if you want to create a value based on a switch statement, you can't just do `const something = switch(...) {...}`. You have to instead declare an empty variable, and then fill it in in every case.
+- When using `match`, if you don't handle all the variants, the compiler will warn you that you forgot some
+- With `switch`, you have to remember to put a `break` in every case, otherwise the code execution will fall through. This behavior is not present with `match`.
+- JavaScript's `switch` is a statement, not an expression, so if you want to create a value based on a switch statement, you can't just do `const something = switch(...) {...}`. You have to instead declare an empty variable, and then fill it in in every case.
 
 Once you have gotten used to programming using `match`, it's hard to go back. `switch` or `if/else` feels clunky, and all the nice warnings your compiler gave you to help you aren't there anymore.
 
-So, I built `safety-match` to bring this experience to JavaScript, by leveraging TypeScript/Flow.
+So, I built `safety-match` to bring this experience to JavaScript, by leveraging TypeScript.
 
 Here's what it looks like. Note that instead of using the word "enum" like in Rust, I opted to instead call them ["Tagged Unions"](https://en.wikipedia.org/wiki/Tagged_union), because TypeScript already has a concept of "enums", and I didn't want to confuse people.
 
@@ -125,9 +123,9 @@ It's not quite as succinct, since we're limited to JavaScript's syntax, but hope
 
 My solution provides the same advantages over switch statements that I mentioned earlier:
 
-- If you don't handle all the variants, either TypeScript or Flow will warn you that you forgot some (depending on which you use)
-- You don't have to put `break`s in
+- You don't have to put `break`s in.
 - `msg.match(...)` is an expression, and it evaluates to the return value of each match handler.
+- If you don't handle all the variants, TypeScript will warn you that you forgot some.
 
 I'll explain everything that's going on in the "Usage and Explanation" section below.
 
@@ -317,10 +315,7 @@ This is important, since the idea of `safety-match` is that you'll pass `MemberO
 The way you do this is by using a helper type from the `safety-match` package called `MemberType`:
 
 ```ts
-// TypeScript:
-import {MemberType} from "safety-match";
-// Flow:
-import {type MemberType} from "safety-match";
+import { MemberType } from "safety-match";
 ```
 
 Then you pass your `TaggedUnion` in as a type parameter to `MemberType` to get a new type that described the `MemberObject`s for that `TaggedUnion`:
@@ -352,7 +347,7 @@ function displayStringForMemberObj(obj: myTaggedUnionMember) {
 // Etc
 ```
 
-If you are using TypeScript, you can even give the member type the same name as the `TaggedUnion` variable:
+You can even give the member type the same name as the `TaggedUnion` variable:
 
 ```ts
 const LoadState = makeTaggedUnion({
@@ -366,56 +361,11 @@ type LoadState = MemberType<typeof LoadState>;
 let state: LoadState = LoadState.Unstarted;
 ```
 
-But this isn't supported in Flow.
-
 ## Note About the `variant` Property
 
 Although a `MemberObject` has a `variant` property, and you could theoretically use it in an `if` or `switch` statement, you should generally rely on `.match` for branching behavior instead.
 
 However, it's often useful to use the `variant` property when logging a `MemberObject`.
-
-## Flow Limitations
-
-### Data falls back to any in some (uncommon) places
-
-Due to limitations in Flow, there are a few places where TypeScript knows what type something is, but Flow does not (and has to use `any` instead). These are:
-
-- The data passed into a `_` handler in a match
-- The `data` property on a `MemberObject` (but not the data passed into non-`_` match handlers; those are typed).
-
-### Old versions don't handle match properly
-
-If you're using an old version of flow, match might report errors even though you're using it correctly. The current version of flow at time of writing is 0.134.0.
-
-### May need to annotate `TaggedUnion`s in `types_first` mode
-
-If flow is configured to use `types_first` mode (which is the default in flow 0.134.0 and higher), you may need to annotate your `TaggedUnion` objects in order to export them from modules. You'll know you need to do this if flow gives you an error like this:
-
-```
-Cannot build a typed interface for this module. You should annotate the exports of this module with types. Cannot determine the type of this call expression. Please provide an annotation, e.g., by adding a type cast around this expression.
-```
-
-If you get such an error, and your code looks something like this:
-
-```ts
-import { makeTaggedUnion, none } from "safety-match";
-
-export const myTaggedUnion = makeTaggedUnion({
-  /* variants... */
-});
-```
-
-You can make flow happy by changing it to this:
-
-```ts
-import {makeTaggedUnion, none, type TaggedUnion} from "safety-match";
-
-const myDefObj = {
-  /* variants... */
-};
-
-export const myTaggedUnion: TaggedUnion<typeof myDefObj> = makeTaggedUnions(myDefObj);
-```
 
 ## License
 
