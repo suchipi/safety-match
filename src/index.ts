@@ -26,6 +26,7 @@ type CasesObjFull<DefObj extends DefObjSuper> = {
     : (data: DataMap<DefObj>[Property]) => any;
 };
 
+// Would call this CasesObjPartial if we didn't need to use the name for error reporting
 type if_you_are_seeing_this_then_your_match_didnt_either_handle_all_cases_or_provide_a_default_handler_using_underscore<
   DefObj extends DefObjSuper
 > = Partial<CasesObjFull<DefObj>> & {
@@ -36,9 +37,7 @@ type if_you_are_seeing_this_then_your_match_didnt_either_handle_all_cases_or_pro
 
 type MatchConfiguration<DefObj extends DefObjSuper> =
   | CasesObjFull<DefObj>
-  | if_you_are_seeing_this_then_your_match_didnt_either_handle_all_cases_or_provide_a_default_handler_using_underscore<
-      DefObj
-    >;
+  | if_you_are_seeing_this_then_your_match_didnt_either_handle_all_cases_or_provide_a_default_handler_using_underscore<DefObj>;
 
 class MemberObjectImpl {
   variant: any;
