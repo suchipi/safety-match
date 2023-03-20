@@ -258,7 +258,7 @@ type MemberObject = {
 };
 ```
 
-It's a function that you can call to branch execution depending on the `type` of the `MemberObject`.
+It's a function that you can call to branch execution depending on the `variant` property of the `MemberObject`.
 
 To use it, you pass in an object we call the "Cases Object". This object should have a property for each variant, whose value is a function to be run if the `MemberObject` being matched has the variant in question. The function will receive the `MemberObject`'s data.
 
@@ -308,7 +308,7 @@ Now that you understand:
 - how to get `MemberObject`s from that `TaggedUnion`,
 - and how to use `match` on `MemberObject`s to branch behavior,
 
-The only thing left that you need to know is how to get a type that describes a `MemberObject` for a given `TaggedUnion`.
+The only thing left that you need to know is how to get a TypeScript type that describes a `MemberObject` for a given `TaggedUnion`.
 
 This is important, since the idea of `safety-match` is that you'll pass `MemberObject`s around that represent values in your application. So you'll need to annotate functions that receive or return `MemberObject`s appropriately.
 
@@ -318,7 +318,7 @@ The way you do this is by using a helper type from the `safety-match` package ca
 import { MemberType } from "safety-match";
 ```
 
-Then you pass your `TaggedUnion` in as a type parameter to `MemberType` to get a new type that described the `MemberObject`s for that `TaggedUnion`:
+Then you pass your `TaggedUnion` in as a type parameter to `MemberType` to get a new type that described the `MemberObject`s for that `TaggedUnion`. Note that you have to use `typeof`:
 
 ```ts
 const myTaggedUnion = makeTaggedUnion({
