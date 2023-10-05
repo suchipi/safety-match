@@ -371,6 +371,10 @@ However, it's often useful to use the `variant` property when logging a `MemberO
 
 To use generics in your tagged union type, ie to represent a `Maybe<T>` with `Some` and `None`, you'll have to use a bit of boilerplate. See [this issue comment](https://github.com/suchipi/safety-match/issues/15#issuecomment-1384721329) for an example.
 
+## See also
+
+- https://github.com/suchipi/match-discriminated-union
+
 ## License
 
 MIT
