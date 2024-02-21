@@ -1,5 +1,7 @@
 # safety-match
 
+> NO LONGER MAINTAINED. USE [match-discriminated-union](https://github.com/suchipi/match-discriminated-union) INSTEAD
+
 `safety-match` provides pattern matching for JavaScript and TypeScript.
 
 ## High-level Explanation
